@@ -11,7 +11,7 @@ import (
 
 type mocked struct{}
 
-var textView mocked
+var textView *mocked
 var argUi = new(bool)
 
 func ui(c chan struct{}) {
