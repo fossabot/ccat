@@ -10,8 +10,10 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.26.11
 	github.com/aws/aws-sdk-go-v2/service/sts v1.16.7
 	github.com/eliukblau/pixterm v1.3.1
+	github.com/gdamore/tcell/v2 v2.5.1
 	github.com/klauspost/compress v1.15.6
 	github.com/pierrec/lz4/v4 v4.1.14
+	github.com/rivo/tview v0.0.0-20220610163003-691f46d6f500
 	github.com/ulikunitz/xz v0.5.10
 	golang.org/x/term v0.0.0-20220526004731-065cf7ba2467
 	sigs.k8s.io/yaml v1.3.0

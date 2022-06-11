@@ -41,6 +41,9 @@ var (
 func init() {
 	flag.Usage = Usage
 	flag.Parse()
+	if *argUi {
+		*argDebug = false
+	}
 
 	if !*argDebug {
 		log.SetDebug(ioutil.Discard)
@@ -99,8 +102,15 @@ func main() {
 	globalctx.Set("fileList", fileList)
 	log.Debugln("processing...")
 	for _, path := range fileList {
+		c := make(chan struct{})
+		go ui(c)
+		log.Debugln("waiting for ui")
+		<-c
 		processFile(path)
+		log.Debugln("waiting for end of ui")
+		<-c
 	}
+
 }
 
 func Usage() {

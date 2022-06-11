@@ -31,7 +31,6 @@ func Go(w io.WriteCloser, r io.ReadCloser, o Options) error {
 	}()
 	return nil
 }
-
 func Help() string {
 	c := new(Chroma)
 	return c.help()

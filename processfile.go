@@ -143,9 +143,17 @@ func processFile(path string) {
 			lineNumber++
 		}
 		if !*argOnlyMatching || matched && *argOnlyMatching {
-			os.Stdout.Write(text)
+			w := globalctx.Get("textview")
+			//if w != nil {
+			w.(io.Writer).Write(text)
+
+			/* } else {
+				os.Stdout.Write(text)
+			} */
 		}
 	}
+	textView.ScrollToBeginning()
+
 	if err := scanner.Err(); err != nil {
 		log.Println(err)
 	}
