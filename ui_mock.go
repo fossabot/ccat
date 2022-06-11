@@ -25,5 +25,4 @@ func ui(c chan struct{}) {
 }
 
 func (m mocked) ScrollToBeginning() {
-
 }

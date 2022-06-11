@@ -144,16 +144,13 @@ func processFile(path string) {
 		}
 		if !*argOnlyMatching || matched && *argOnlyMatching {
 			w := globalctx.Get("textview")
-			//if w != nil {
 			w.(io.Writer).Write(text)
-
-			/* } else {
-				os.Stdout.Write(text)
-			} */
 		}
 	}
-	textView.ScrollToBeginning()
 
+	if textView != nil {
+		textView.ScrollToBeginning()
+	}
 	if err := scanner.Err(); err != nil {
 		log.Println(err)
 	}
