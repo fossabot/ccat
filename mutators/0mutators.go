@@ -14,6 +14,8 @@ var (
 	globalCollection = newCollection("globalMutatorsCollection", log.Default())
 )
 
+//Mutator and factory should be totally separate or reentrant as in the future they may be used simultaneously
+
 type Mutator interface {
 	Start(w io.WriteCloser, r io.ReadCloser) error
 	Wait() error
@@ -21,7 +23,7 @@ type Mutator interface {
 	Description() string
 }
 type factory interface {
-	new(logger *log.Logger) (Mutator, error)
+	newMutator(logger *log.Logger) (Mutator, error)
 	Name() string
 	Description() string
 }
@@ -69,7 +71,7 @@ func New(name string) (Mutator, error) {
 	}
 	glog.Printf("mutators: instancing %s\n", name)
 
-	m, err := factory.new(globalCollection.logger)
+	m, err := factory.newMutator(globalCollection.logger)
 	if err != nil {
 		return nil, err
 	}
@@ -78,7 +80,7 @@ func New(name string) (Mutator, error) {
 	return m, nil
 }
 
-func ListMutators() []string {
+func ListAvailableMutators() []string {
 	var l []string
 	for _, v := range globalCollection.factories {
 		l = append(l, v.Name()+": "+v.Description())

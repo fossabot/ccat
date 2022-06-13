@@ -12,6 +12,7 @@ import (
 	"ccat/term"
 	"fmt"
 	"io"
+	"strings"
 
 	//_ "net/http/pprof"
 	"os"
@@ -27,7 +28,12 @@ func processFile(path string) {
 		log.Printf("opening %s: %v", path, err)
 		return
 	}
-
+	if *argHuman {
+		if len(*argMutator) == 0 && (strings.HasSuffix(path, ".md") || strings.HasSuffix(path, ".MD")) {
+			log.Debugf("%s is .md, adding the md mutator", path)
+			*argMutator = "md"
+		}
+	}
 	if len(*argMutator) > 0 {
 		choice := *argMutator
 		r, w := io.Pipe()
@@ -78,24 +84,27 @@ func processFile(path string) {
 			term.PrintArt(from)
 			return
 		}
-		log.Debugln("highlighting...")
-		hl := globalctx.Get("hintLexer")
-		if len(*argLexer) == 0 && hl != nil && len(hl.(string)) != 0 {
-			hl := hl.(string)
-			argLexer = &hl
-		}
+		expectingBinary := globalctx.Get("expectingBinary")
+		if expectingBinary == nil || expectingBinary != nil && !expectingBinary.(bool) {
+			log.Debugln("highlighting...")
+			hl := globalctx.Get("hintLexer")
+			if len(*argLexer) == 0 && hl != nil && len(hl.(string)) != 0 {
+				hl := hl.(string)
+				argLexer = &hl
+			}
 
-		r, w := io.Pipe()
-		err := highlighter.Go(w, from, highlighter.Options{
-			FileName:      path,
-			StyleHint:     *argStyle,
-			FormatterHint: *argFormatter,
-			LexerHint:     *argLexer,
-		})
-		if err != nil {
-			log.Printf("error while highlighting: %v", err)
-		} else {
-			from = r
+			r, w := io.Pipe()
+			err := highlighter.Go(w, from, highlighter.Options{
+				FileName:      path,
+				StyleHint:     *argStyle,
+				FormatterHint: *argFormatter,
+				LexerHint:     *argLexer,
+			})
+			if err != nil {
+				log.Printf("error while highlighting: %v", err)
+			} else {
+				from = r
+			}
 		}
 	}
 	log.Debugln("initializing Scanner...")

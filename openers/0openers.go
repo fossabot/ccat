@@ -5,6 +5,7 @@ import (
 	"errors"
 	"io"
 	"os"
+	"strings"
 	"sync"
 )
 
@@ -57,7 +58,11 @@ func Open(s string, lock bool) (io.ReadCloser, error) {
 
 	}
 	if eMax == 0.0 {
-		return nil, errors.New("No adequate opener found.")
+		if !strings.Contains(s, "://") {
+			return nil, errors.New("file does not exist.")
+		} else {
+			return nil, errors.New("No adequate opener found.")
+		}
 	}
 	log.Debugf(" openers: chosen one is \"%s\"\n", oChosen.Name())
 	return oChosen.Open(s, lock)
